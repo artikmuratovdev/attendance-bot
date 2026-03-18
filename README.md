@@ -46,7 +46,8 @@ cp .env.example .env
 ```env
 BOT_TOKEN=your_bot_token_here
 MONGODB_URI=mongodb://localhost:27017/attendance_bot
-TEACHER_IDS=123456789,987654321
+REDIS_URL=redis://localhost:6379/attendance_bot
+SUPER_ADMIN_IDS=12345678,09876543
 CODE_INTERVAL_SECONDS=30
 CODE_LENGTH=6
 ```
