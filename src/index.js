@@ -100,6 +100,16 @@ bot.command('sessions',      teacherOnly, showSessions);
 
 bot.command('my_attendance', showMyAttendance);
 
+bot.command('cancel', async (ctx) => {
+  const inScene = Boolean(ctx.scene?.current);
+  if (inScene) {
+    await ctx.scene.leave();
+  }
+
+  const kb = await getSmartKeyboard(ctx.from.id);
+  return ctx.reply(inScene ? '↩️ Amal bekor qilindi.' : 'ℹ️ Bekor qilinadigan faol jarayon yo\'q.', kb);
+});
+
 bot.command('help', async (ctx) => {
   const userId = ctx.from.id;
   const intervalSec = process.env.CODE_INTERVAL_SECONDS || 30;
@@ -163,8 +173,12 @@ bot.hears('❓ Yordam', async (ctx) => {
 
 // Sessiyani yakunlash — tasdiqlash tugmalari
 bot.hears('✅ Ha, tugatish', teacherOnly, confirmEndSession);
-bot.hears('❌ Bekor qilish', teacherOnly, async (ctx) => {
-  // ✅ Rol bo'yicha to'g'ri keyboard qaytarish
+bot.hears('❌ Bekor qilish', async (ctx) => {
+  if (ctx.scene?.current) {
+    await ctx.scene.leave();
+  }
+
+  // Rol bo'yicha to'g'ri keyboard qaytarish
   const kb = await getSmartKeyboard(ctx.from.id);
   await ctx.reply('↩️ Bekor qilindi.', kb);
 });

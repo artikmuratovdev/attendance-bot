@@ -29,32 +29,48 @@ const startSessionWizard = new Scenes.WizardScene(
 
   async (ctx) => {
     await ctx.reply(
-      '📚 <b>Yangi dars sessiyasi</b>\n\nFan nomini kiriting:\n<i>(masalan: Matematika, Fizika, Ingliz tili)</i>',
+      '📚 <b>Yangi dars sessiyasi</b>\n\nFan nomini kiriting:\n<i>(masalan: Matematika, Fizika, Ingliz tili)</i>\n\nBekor qilish: /cancel yoki ❌ Bekor qilish',
       { parse_mode: 'HTML', reply_markup: { remove_keyboard: true } }
     );
     return ctx.wizard.next();
   },
 
   async (ctx) => {
-    if (!ctx.message?.text) {
+    const text = ctx.message?.text?.trim();
+
+    if (text === '/cancel' || text === '❌ Bekor qilish') {
+      const kb = await getSmartKeyboard(ctx.from.id);
+      await ctx.reply('↩️ Amal bekor qilindi.', kb);
+      return ctx.scene.leave();
+    }
+
+    if (!text) {
       await ctx.reply('❌ Iltimos, fan nomini matn ko\'rinishida yuboring.');
       return;
     }
-    ctx.wizard.state.subject = ctx.message.text.trim();
+    ctx.wizard.state.subject = text;
     await ctx.reply(
-      `✅ Fan: <b>${ctx.wizard.state.subject}</b>\n\nGuruh nomini kiriting:\n<i>(masalan: CS-101, 3-B, 21-guruh)</i>`,
+      `✅ Fan: <b>${ctx.wizard.state.subject}</b>\n\nGuruh nomini kiriting:\n<i>(masalan: CS-101, 3-B, 21-guruh)</i>\n\nBekor qilish: /cancel yoki ❌ Bekor qilish`,
       { parse_mode: 'HTML' }
     );
     return ctx.wizard.next();
   },
 
   async (ctx) => {
-    if (!ctx.message?.text) {
+    const text = ctx.message?.text?.trim();
+
+    if (text === '/cancel' || text === '❌ Bekor qilish') {
+      const kb = await getSmartKeyboard(ctx.from.id);
+      await ctx.reply('↩️ Amal bekor qilindi.', kb);
+      return ctx.scene.leave();
+    }
+
+    if (!text) {
       await ctx.reply('❌ Iltimos, guruh nomini matn ko\'rinishida yuboring.');
       return;
     }
 
-    const group = ctx.message.text.trim();
+    const group = text;
     const subject = ctx.wizard.state.subject;
     const teacherId = ctx.from.id;
     const today = getTodayString();

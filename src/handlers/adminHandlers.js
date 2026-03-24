@@ -15,7 +15,8 @@ const addTeacherWizard = new Scenes.WizardScene(
     await ctx.reply(
       `➕ <b>Yangi o'qituvchi qo'shish</b>\n\n` +
       `O'qituvchining <b>Telegram ID</b> sini kiriting.\n\n` +
-      `<i>O'qituvchi @userinfobot dan ID sini bilib olishi mumkin</i>`,
+      `<i>O'qituvchi @userinfobot dan ID sini bilib olishi mumkin</i>\n\n` +
+      `Bekor qilish: /cancel yoki ❌ Bekor qilish`,
       { parse_mode: 'HTML', reply_markup: { remove_keyboard: true } }
     );
     return ctx.wizard.next();
@@ -23,6 +24,11 @@ const addTeacherWizard = new Scenes.WizardScene(
 
   async (ctx) => {
     const text = ctx.message?.text?.trim();
+    if (text === '/cancel' || text === '❌ Bekor qilish') {
+      await ctx.reply('↩️ Amal bekor qilindi.', adminMainKeyboard);
+      return ctx.scene.leave();
+    }
+
     if (!text || !/^\d+$/.test(text)) {
       await ctx.reply('❌ Faqat raqam kiriting. Masalan: <code>123456789</code>', { parse_mode: 'HTML' });
       return;
@@ -40,7 +46,7 @@ const addTeacherWizard = new Scenes.WizardScene(
 
     ctx.wizard.state.telegramId = telegramId;
     await ctx.reply(
-      `✅ ID: <code>${telegramId}</code>\n\nO'qituvchining <b>to'liq ismini</b> kiriting:`,
+      `✅ ID: <code>${telegramId}</code>\n\nO'qituvchining <b>to'liq ismini</b> kiriting:\n\nBekor qilish: /cancel yoki ❌ Bekor qilish`,
       { parse_mode: 'HTML' }
     );
     return ctx.wizard.next();
@@ -48,6 +54,11 @@ const addTeacherWizard = new Scenes.WizardScene(
 
   async (ctx) => {
     const fullName = ctx.message?.text?.trim();
+    if (fullName === '/cancel' || fullName === '❌ Bekor qilish') {
+      await ctx.reply('↩️ Amal bekor qilindi.', adminMainKeyboard);
+      return ctx.scene.leave();
+    }
+
     if (!fullName || fullName.length < 2) {
       await ctx.reply('❌ Iltimos, to\'liq ism kiriting (kamida 2 ta belgi).');
       return;
@@ -104,7 +115,7 @@ const removeTeacherWizard = new Scenes.WizardScene(
     teachers.forEach((t, i) => {
       message += `${i + 1}. <b>${t.fullName}</b>\n   🆔 <code>${t.telegramId}</code>\n\n`;
     });
-    message += `<i>O'qituvchi Telegram ID sini yuboring:</i>`;
+    message += `<i>O'qituvchi Telegram ID sini yuboring:</i>\n\nBekor qilish: /cancel yoki ❌ Bekor qilish`;
 
     await ctx.reply(message, { parse_mode: 'HTML', reply_markup: { remove_keyboard: true } });
     return ctx.wizard.next();
@@ -112,6 +123,11 @@ const removeTeacherWizard = new Scenes.WizardScene(
 
   async (ctx) => {
     const text = ctx.message?.text?.trim();
+    if (text === '/cancel' || text === '❌ Bekor qilish') {
+      await ctx.reply('↩️ Amal bekor qilindi.', adminMainKeyboard);
+      return ctx.scene.leave();
+    }
+
     if (!text || !/^\d+$/.test(text)) {
       await ctx.reply('❌ Faqat raqam kiriting.');
       return;
